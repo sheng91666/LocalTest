@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.caicai.shouzhang.mapper.ZhangDanMapper">
+    <resultMap id="BaseResultMap" type="cn.caicai.shouzhang.entity.ZhangDan">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="goods_name" property="goodsName" jdbcType="VARCHAR"/>
+        <result column="delete_flag" property="deleteFlag" jdbcType="INTEGER"/>
+        <result column="l_flag" property="lFlag" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="create_name" property="createName" jdbcType="VARCHAR"/>
+        <result column="update_name" property="updateName" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="money" property="money" jdbcType="DECIMAL"/>
+    </resultMap>
+
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from zhangdan
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+    <insert id="insert" parameterType="cn.caicai.shouzhang.entity.ZhangDan">
+    insert into zhangdan (id, goods_name, delete_flag, 
+      l_flag, remark, create_name, 
+      update_name, create_time, update_time, 
+      money)
+    values (#{id,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, #{deleteFlag,jdbcType=INTEGER}, 
+      #{lFlag,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{createName,jdbcType=VARCHAR}, 
+      #{updateName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{money,jdbcType=DECIMAL})
+  </insert>
+    <insert id="insertSelective" parameterType="cn.caicai.shouzhang.entity.ZhangDan">
+        insert into zhangdan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="goodsName != null">
+                goods_name,
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag,
+            </if>
+            <if test="lFlag != null">
+                l_flag,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createName != null">
+                create_name,
+            </if>
+            <if test="updateName != null">
+                update_name,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="money != null">
+                money,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="goodsName != null">
+                #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="lFlag != null">
+                #{lFlag,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createName != null">
+                #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateName != null">
+                #{updateName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="money != null">
+                #{money,jdbcType=DECIMAL},
+            </if>
+        </trim>
+    </insert>
+
+
+    <update id="updateByPrimaryKeySelective" parameterType="cn.caicai.shouzhang.entity.ZhangDan">
+        update zhangdan
+        <set>
+            <if test="goodsName != null">
+                goods_name = #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="deleteFlag != null">
+                delete_flag = #{deleteFlag,jdbcType=INTEGER},
+            </if>
+            <if test="lFlag != null">
+                l_flag = #{lFlag,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createName != null">
+                create_name = #{createName,jdbcType=VARCHAR},
+            </if>
+            <if test="updateName != null">
+                update_name = #{updateName,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="money != null">
+                money = #{money,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="cn.caicai.shouzhang.entity.ZhangDan">
+    update zhangdan
+    set goods_name = #{goodsName,jdbcType=VARCHAR},
+      delete_flag = #{deleteFlag,jdbcType=INTEGER},
+      l_flag = #{lFlag,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      create_name = #{createName,jdbcType=VARCHAR},
+      update_name = #{updateName,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      money = #{money,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="selectZhangDanByZhangDan" parameterType="cn.caicai.shouzhang.entity.ZhangDan"
+            resultType="cn.caicai.shouzhang.entity.ZhangDan">
+        SELECT
+        goods_name as "goodsName",
+        l_flag as "lFlag",
+        remark as "remark",
+        create_name as "createName",
+        update_name as "updateName",
+        create_time as "createTime",
+        update_time as "updateTime",
+        money as "money"
+        FROM zhangdan
+        WHERE
+        delete_flag != 0
+        <if test="goodsName != null">and goods_name=#{goodsName}</if>
+        <if test="lFlag != null">and l_flag=#{lFlag}</if>
+        <if test="remark != null">and remark=#{remark}</if>
+        <if test="createName != null">and create_name=#{createName}</if>
+        <if test="updateName != null">and update_name=#{updateName}</if>
+        <if test="createTime != null">and create_time=#{createTime}</if>
+        <if test="updateTime != null">and update_time=#{updateTime}</if>
+        <if test="money != null">and money=#{money}</if>
+    </select>
+</mapper>
