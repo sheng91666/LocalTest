@@ -1,15 +1,23 @@
 package WorkTest;
 
 import com.alibaba.fastjson.JSON;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class HttpTest {
 
@@ -56,8 +64,60 @@ public class HttpTest {
     }
 
 
+    public static void main(String[] args) {
+        vo vo1 = new vo();
+        vo1.setProducer("宝特长材");
+        vo1.setSpec("8.5");
+        vo1.setWarehouse("上海欧珏供应链管理有限公司三冠库");
+        vo1.setVariety("盘条");
+
+        vo vo2 = new vo();
+        vo2.setVariety("冷轧卷");
+        vo2.setWarehouse("天津汇金金属材料加工有限公司");
+        vo2.setSpec("8.5");
+        vo2.setProducer("宝钢");
+
+        List<vo> voList = new ArrayList<>();
+        voList.add(vo1);
+        voList.add(vo2);
+
+        List<Map<String, String>> list2 = new ArrayList<>();
+        Map<String, String> map1 = new HashMap<>();
+        map1.put("warehouse", "天津汇金金属材料加工有限公司");
+        map1.put("producer", "宝钢");
+        map1.put("variety", "冷轧卷");
+        map1.put("spec", "8.5");
+        map1.put("UUID", "abc");
+        Map<String, String> map2 = new HashMap<>();
+        map2.put("warehouse", "上海欧珏供应链管理有限公司三冠库");
+        map2.put("producer", "宝特长材");
+        map2.put("variety", "盘条");
+        map2.put("spec", "8.5*b");
+        map2.put("UUID", "abc");
+
+        list2.add(map1);
+        list2.add(map2);
+        String url = "https://yunzhi.baidu.com/api/ouyeel/text2record/v1/analysis/db";
+        String data = JSON.toJSONString(list2);
+
+//        interfaceUtil("https://yunzhi.baidu.com/api/ouyeel/text2record/v1/analysis/db", JSON.toJSONString(voList));
+        final String encoding = "UTF-8";
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        try {
+            HttpClient httpClient = new HttpClient();
+            httpClient.queryBaiDuApi(url, data, uuid, encoding);
+        } catch (Exception e) {
+            System.out.println("HttpTest error");
+        }
+    }
+}
+
+class HttpClient {
+    private Logger log = LoggerFactory.getLogger(HttpClient.class);
+
     /**
      * HttpClient
+     *
      * @param url
      * @param jsonStr
      * @param uuid
@@ -65,15 +125,15 @@ public class HttpTest {
      * @return
      * @throws IOException
      */
-    public String queryBaiDuApi(String url, String jsonStr, String uuid, String encoding) throws IOException {
+    public String queryBaiDuApi(String url, String jsonStr, String uuid, String encoding) throws Exception {
         RequestConfig.Builder builder = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(300000);
 
         //10.60.164.32  443
-//        log.info(" ----- 代理服务器配置 ------");
-//        log.info(" ----- IP {}", this.proxyHttpsIp);
-//        log.info(" ----- Port {}", this.proxyHttpsPort);
-//        HttpHost proxy = new HttpHost(this.proxyHttpsIp, Integer.valueOf(this.proxyHttpsPort));
-//        builder.setProxy(proxy);
+        log.info(" ----- 代理服务器配置 ------");
+        log.info(" ----- IP {}", "10.60.164.32");
+        log.info(" ----- Port {}", "443");
+        HttpHost proxy = new HttpHost("10.60.164.32", Integer.valueOf("443"));
+        builder.setProxy(proxy);
 
         HttpPost httpPost = new HttpPost(url);
         CloseableHttpClient client = HttpClients.createDefault();
@@ -94,6 +154,7 @@ public class HttpTest {
         if (HttpStatus.SC_OK == statusCode) {
             HttpEntity httpEntity = httpResponse.getEntity();
             response = EntityUtils.toString(httpEntity, encoding);
+            System.out.println(JSON.toJSONString(response));
         } else {
             Map statusCodeMap = new HashMap<String, String>() {
                 private static final long serialVersionUID = 1L;
@@ -108,36 +169,13 @@ public class HttpTest {
             if (!statusCodeMap.containsKey(statusCode)) {
                 log.info("调百度api返回状态--{}", statusCode);
                 log.info(EntityUtils.toString(httpResponse.getEntity(), encoding));
-                throw new JkStoreBusinessException(String.format("调百度api返回值 %s from server %s .", statusCode, url));
+                throw new Exception(String.format("调百度api返回值 %s from server %s .", statusCode, url));
             } else {
                 log.info("调百度api返回状态--{}", statusCodeMap.get(statusCode).toString());
-                throw new JkStoreBusinessException(String.format("调百度api返回值 %s from server %s .", statusCode, url));
+                throw new Exception(String.format("调百度api返回值 %s from server %s .", statusCode, url));
             }
         }
         return response;
-    }
-
-
-    public static void main(String[] args) {
-        vo vo1 = new vo();
-        vo1.setProducer("宝特长材");
-        vo1.setSpec("8.5");
-        vo1.setWarehouse("上海欧珏供应链管理有限公司三冠库");
-        vo1.setVariety("盘条");
-
-        vo vo2 = new vo();
-        vo2.setVariety("冷轧卷");
-        vo2.setWarehouse("天津汇金金属材料加工有限公司");
-        vo2.setSpec("8.5");
-        vo2.setProducer("宝钢");
-
-        List<vo> voList = new ArrayList<>();
-        voList.add(vo1);
-        voList.add(vo2);
-
-        interfaceUtil("https://yunzhi.baidu.com/api/ouyeel/text2record/v1/analysis/db", JSON.toJSONString(voList));
-
-        queryBaiDuApi();
     }
 }
 
