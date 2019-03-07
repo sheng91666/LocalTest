@@ -55,6 +55,69 @@ public class HttpTest {
         }
     }
 
+
+    /**
+     * HttpClient
+     * @param url
+     * @param jsonStr
+     * @param uuid
+     * @param encoding
+     * @return
+     * @throws IOException
+     */
+    public String queryBaiDuApi(String url, String jsonStr, String uuid, String encoding) throws IOException {
+        RequestConfig.Builder builder = RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(300000);
+
+        //10.60.164.32  443
+//        log.info(" ----- 代理服务器配置 ------");
+//        log.info(" ----- IP {}", this.proxyHttpsIp);
+//        log.info(" ----- Port {}", this.proxyHttpsPort);
+//        HttpHost proxy = new HttpHost(this.proxyHttpsIp, Integer.valueOf(this.proxyHttpsPort));
+//        builder.setProxy(proxy);
+
+        HttpPost httpPost = new HttpPost(url);
+        CloseableHttpClient client = HttpClients.createDefault();
+
+        httpPost.addHeader("Content-Type", "application/json");
+        httpPost.setHeader("cache-control", "no-cache");
+        httpPost.setHeader("Authorization", "5X#jr9T7bz");
+        httpPost.setHeader("request_id", uuid);
+
+        httpPost.setConfig(builder.build());
+        StringEntity entity = new StringEntity(jsonStr, encoding);
+        httpPost.setEntity(entity);
+        CloseableHttpResponse httpResponse = client.execute(httpPost);
+
+        String response;
+        int statusCode = httpResponse.getStatusLine().getStatusCode();
+        httpPost.abort();//手动关闭连接
+        if (HttpStatus.SC_OK == statusCode) {
+            HttpEntity httpEntity = httpResponse.getEntity();
+            response = EntityUtils.toString(httpEntity, encoding);
+        } else {
+            Map statusCodeMap = new HashMap<String, String>() {
+                private static final long serialVersionUID = 1L;
+
+                {
+                    put("400", "请求参数错误");
+                    put("401", "未通过权限校验");
+                    put("500", "内部错误");
+                }
+            };
+
+            if (!statusCodeMap.containsKey(statusCode)) {
+                log.info("调百度api返回状态--{}", statusCode);
+                log.info(EntityUtils.toString(httpResponse.getEntity(), encoding));
+                throw new JkStoreBusinessException(String.format("调百度api返回值 %s from server %s .", statusCode, url));
+            } else {
+                log.info("调百度api返回状态--{}", statusCodeMap.get(statusCode).toString());
+                throw new JkStoreBusinessException(String.format("调百度api返回值 %s from server %s .", statusCode, url));
+            }
+        }
+        return response;
+    }
+
+
     public static void main(String[] args) {
         vo vo1 = new vo();
         vo1.setProducer("宝特长材");
@@ -72,8 +135,9 @@ public class HttpTest {
         voList.add(vo1);
         voList.add(vo2);
 
-        interfaceUtil("https://yunzhi.baidu.com/api/ouyeel/text2record/v1/analysis/db",
-                JSON.toJSONString(voList));
+        interfaceUtil("https://yunzhi.baidu.com/api/ouyeel/text2record/v1/analysis/db", JSON.toJSONString(voList));
+
+        queryBaiDuApi();
     }
 }
 
