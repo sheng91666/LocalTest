@@ -1,11 +1,7 @@
 import com.alibaba.fastjson.JSON;
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -14,18 +10,15 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static sun.misc.Version.print;
 
 
 public class test {
@@ -245,6 +238,7 @@ public class test {
         System.out.println(JSON.toJSONString(resourceTemp));
     }
 
+    //正则
     public static void test10(ResourceTemp resourceTemp) {
         String str = resourceTemp.getSpec();
         String regex = "\\*";
@@ -318,7 +312,7 @@ public class test {
     public static void test14() {
         final String url = "https://yunzhi.baidu.com/api/ouyeel/text2record/v1/analysis/excel";
         RequestConfig.Builder builder = RequestConfig.custom().setConnectTimeout(10000).setSocketTimeout(30000).setConnectionRequestTimeout(20000);
-        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
+//        MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create().setMode(HttpMultipartMode.RFC6532);
 
 
         FileInputStream inputStream = null;
@@ -332,7 +326,7 @@ public class test {
         File file = new File("C:\\Users\\CS\\Downloads\\板材类模板_不锈钢.xls");
 //        multipartEntityBuilder.addBinaryBody("file", inputStream, ContentType.DEFAULT_BINARY, "板材类模板_不锈钢.xls");
 //        multipartEntityBuilder.addBinaryBody("file", inputStream, ContentType.APPLICATION_OCTET_STREAM, "板材模板.xls");
-        HttpEntity entity = multipartEntityBuilder.build();
+//        HttpEntity entity = multipartEntityBuilder.build();
 
         HttpPost httpPost = new HttpPost(url);
         httpPost.addHeader("Content-Type", "application/json");
@@ -340,7 +334,7 @@ public class test {
         httpPost.setHeader("Authorization", "5X#jr9T7bz");
         httpPost.setHeader("request_id", "11112222333344445555666677778888");
         httpPost.setConfig(builder.build());
-        httpPost.setEntity(entity);
+//        httpPost.setEntity(entity);
 
         CloseableHttpClient client = HttpClientBuilder.create().build();
         try {
@@ -399,6 +393,29 @@ public class test {
 
     }
 
+    static class InitialValue{
+        boolean bo;
+        char c;
+        byte b;
+        short s;
+        int i;
+        long l;
+        float f;
+        double d;
+        InitialValue reference;
+        void printInitialValue(){
+            System.out.println("Data type        Initial value");
+            System.out.println("boolean     "+bo);
+            System.out.println("char     "+c);
+            System.out.println("byte     "+b);
+            System.out.println("short     "+s);
+            System.out.println("int     "+i);
+            System.out.println("long     "+l);
+            System.out.println("float     "+f);
+            System.out.println("double     "+d);
+        }
+    }
+
     public static void main(String[] args) {
         //        List<String> list = Arrays.asList("1", "2", "3", "4");
 //
@@ -407,21 +424,15 @@ public class test {
 //            dataList.add(i);
 //        }
 //        ChuLi.test(dataList);
+        Map<String,String> hashMap = new HashMap();
+        String s = hashMap.get("1111");
+        System.out.println(s);
 
-//        ResourceTemp resourceTemp = new ResourceTemp();
-//        resourceTemp.setSpec("6.5*3*100110");
-//        resourceTemp.setSpec1("0");
-//        resourceTemp.setSpec3("0");
-//        resourceTemp.setSpec5("0");
-//        test9(resourceTemp);
-
-//        test10(resourceTemp);
-//        test14();
-
-        test15();
     }
 
 }
+
+
 
 class ResourceTemp{
     private String spec;
